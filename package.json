@@ -1,0 +1,29 @@
+{
+  "name": "reactive-json",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/reactive-json.js",
+  "scripts": {
+    "test": "jest",
+    "lint": "xo"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/privatenumber/reactive-json.git"
+  },
+  "author": "Hiroki Osame <hiroki.osame@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/privatenumber/reactive-json/issues"
+  },
+  "homepage": "https://github.com/privatenumber/reactive-json#readme",
+  "dependencies": {
+    "vue": "^3.0.0-rc.5"
+  },
+  "devDependencies": {
+    "jest": "^26.4.0",
+    "js-yaml": "^3.14.0",
+    "memfs": "^3.2.0",
+    "xo": "^0.33.0"
+  }
+}
