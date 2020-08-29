@@ -26,13 +26,13 @@
   },
   "homepage": "https://github.com/privatenumber/reactive-json#readme",
   "dependencies": {
-    "vue": "^3.0.0-rc.5"
+    "vue": "^3.0.0-rc.9"
   },
   "devDependencies": {
     "husky": "^4.2.5",
-    "jest": "^26.4.0",
+    "jest": "^26.4.2",
     "js-yaml": "^3.14.0",
-    "lint-staged": "^10.2.11",
+    "lint-staged": "^10.2.13",
     "memfs": "^3.2.0",
     "xo": "^0.33.0"
   }
