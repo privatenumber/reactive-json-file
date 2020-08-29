@@ -1,12 +1,12 @@
-# reactive-json <a href="https://npm.im/reactive-json"><img src="https://badgen.net/npm/v/reactive-json"></a> <a href="https://npm.im/reactive-json"><img src="https://badgen.net/npm/dm/reactive-json"></a> <a href="https://packagephobia.now.sh/result?p=reactive-json"><img src="https://packagephobia.now.sh/badge?p=reactive-json"></a> <a href="https://bundlephobia.com/result?p=reactive-json"><img src="https://badgen.net/bundlephobia/minzip/reactive-json"></a>
+# reactive-json-file <a href="https://npm.im/reactive-json-file"><img src="https://badgen.net/npm/v/reactive-json-file"></a> <a href="https://npm.im/reactive-json-file"><img src="https://badgen.net/npm/dm/reactive-json-file"></a> <a href="https://packagephobia.now.sh/result?p=reactive-json-file"><img src="https://packagephobia.now.sh/badge?p=reactive-json-file"></a> <a href="https://bundlephobia.com/result?p=reactive-json-file"><img src="https://badgen.net/bundlephobia/minzip/reactive-json-file"></a>
 
 Save your JS objects to a JSON file as you mutate them
 
 ```js
-const reactiveJson = require('reactive-json');
+const reactiveJsonFile = require('reactive-json-file');
 
 // Create a new JSON
-const obj = reactiveJson('./data.json');
+const obj = reactiveJsonFile('./data.json');
 
 // Mutating it automatically saves to file
 obj.name = 'John Doe';
@@ -15,7 +15,7 @@ obj.name = 'John Doe';
 
 ## :rocket: Install
 ```sh
-npm i reactive-json
+npm i reactive-json-file
 ```
 
 
