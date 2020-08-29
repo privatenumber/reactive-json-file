@@ -2,6 +2,10 @@ const reactiveJson = require('..');
 const {Volume} = require('memfs');
 const yaml = require('js-yaml');
 
+const sleep = ms => new Promise(resolve => {
+	setTimeout(resolve, ms);
+});
+
 const nextTick = () => new Promise(resolve => {
 	process.nextTick(resolve);
 });
@@ -106,4 +110,28 @@ test('only call once', async () => {
 	await nextTick();
 
 	expect(serialize).toHaveBeenCalledTimes(1);
+});
+
+test('throttle', async () => {
+	const serialize = jest.fn(JSON.stringify);
+	const object = reactiveJson(filepath, {
+		fs,
+		serialize,
+		throttle: 1000,
+	});
+
+	async function change(i) {
+		if (i === 0) {
+			return;
+		}
+
+		object.a = Math.random();
+		await sleep(100);
+		return change(--i);
+	}
+
+	await change(5);
+	await sleep(500);
+
+	expect(serialize).toHaveBeenCalledTimes(2);
 });
