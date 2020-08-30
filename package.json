@@ -1,8 +1,21 @@
 {
-  "name": "reactive-json",
-  "version": "1.0.0",
-  "description": "",
-  "main": "lib/reactive-json.js",
+  "name": "reactive-json-file",
+  "version": "0.0.0-semantic-release",
+  "description": "Reactively save objects to file",
+  "keywords": [
+    "reactive",
+    "vue",
+    "json",
+    "save",
+    "file"
+  ],
+  "repository": "privatenumber/reactive-json-file",
+  "author": "Hiroki Osame <hiroki.osame@gmail.com>",
+  "license": "MIT",
+  "files": [
+    "lib"
+  ],
+  "main": "lib/reactive-json-file.js",
   "scripts": {
     "test": "jest",
     "lint": "xo"
@@ -15,17 +28,8 @@
   "lint-staged": {
     "*.js": "xo"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/privatenumber/reactive-json.git"
-  },
-  "author": "Hiroki Osame <hiroki.osame@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/privatenumber/reactive-json/issues"
-  },
-  "homepage": "https://github.com/privatenumber/reactive-json#readme",
   "dependencies": {
+    "lodash.throttle": "^4.1.1",
     "vue": "^3.0.0-rc.9"
   },
   "devDependencies": {

@@ -1,6 +1,10 @@
-const reactiveJson = require('..');
+const reactiveJsonFile = require('..');
 const {Volume} = require('memfs');
 const yaml = require('js-yaml');
+
+const sleep = ms => new Promise(resolve => {
+	setTimeout(resolve, ms);
+});
 
 const nextTick = () => new Promise(resolve => {
 	process.nextTick(resolve);
@@ -16,7 +20,7 @@ beforeEach(() => {
 
 describe('write', () => {
 	test('basic use-case', async () => {
-		const object = reactiveJson(filepath, {fs});
+		const object = reactiveJsonFile(filepath, {fs});
 
 		object.randomProp = 'hello world';
 
@@ -26,7 +30,7 @@ describe('write', () => {
 	});
 
 	test('default object', async () => {
-		const object = Object.assign(reactiveJson(filepath, {fs}), {
+		const object = Object.assign(reactiveJsonFile(filepath, {fs}), {
 			name: 'default name',
 			age: 21,
 		});
@@ -43,7 +47,7 @@ describe('write', () => {
 	});
 
 	test('serialize/deserialize', async () => {
-		const object = reactiveJson(filepath, {
+		const object = reactiveJsonFile(filepath, {
 			fs,
 			serialize: string => yaml.dump(string),
 			deserialize: object_ => yaml.load(object_),
@@ -64,7 +68,7 @@ describe('read', () => {
 			gender: 'male',
 		}));
 
-		const object = reactiveJson(filepath, {fs});
+		const object = reactiveJsonFile(filepath, {fs});
 
 		expect(object).toMatchObject({
 			name: 'john doe',
@@ -78,7 +82,7 @@ describe('read', () => {
 			gender: 'male',
 		}));
 
-		const object = reactiveJson(filepath, {
+		const object = reactiveJsonFile(filepath, {
 			fs,
 			serialize: string => yaml.dump(string),
 			deserialize: object_ => yaml.load(object_),
@@ -93,7 +97,7 @@ describe('read', () => {
 
 test('only call once', async () => {
 	const serialize = jest.fn(JSON.stringify);
-	const object = reactiveJson(filepath, {
+	const object = reactiveJsonFile(filepath, {
 		fs,
 		serialize,
 	});
@@ -106,4 +110,28 @@ test('only call once', async () => {
 	await nextTick();
 
 	expect(serialize).toHaveBeenCalledTimes(1);
+});
+
+test('throttle', async () => {
+	const serialize = jest.fn(JSON.stringify);
+	const object = reactiveJsonFile(filepath, {
+		fs,
+		serialize,
+		throttle: 1000,
+	});
+
+	async function change(i) {
+		if (i === 0) {
+			return;
+		}
+
+		object.a = Math.random();
+		await sleep(100);
+		return change(--i);
+	}
+
+	await change(5);
+	await sleep(500);
+
+	expect(serialize).toHaveBeenCalledTimes(2);
 });
