@@ -1,7 +1,7 @@
 {
 	"name": "reactive-json-file",
 	"version": "0.0.0-semantic-release",
-	"description": "Reactively save objects to file",
+	"description": "Reactively sync JSON mutations to disk",
 	"keywords": [
 		"reactive",
 		"vue",

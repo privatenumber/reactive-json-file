@@ -1,6 +1,6 @@
 # reactive-json-file <a href="https://npm.im/reactive-json-file"><img src="https://badgen.net/npm/v/reactive-json-file"></a>
 
-Sync JavaScript object mutations to JSON file using reactive magic!
+Sync JSON mutations to disk using reactive magic!
 
 Great for removing "save concerns" after updating a JSON object on disk.
 
