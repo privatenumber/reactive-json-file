@@ -2,7 +2,7 @@
 
 Sync JSON mutations to disk using reactive magic!
 
-Great for removing "save concerns" after updating a JSON object on disk.
+Great for removing saving-to-disk concerns when updating a JSON object.
 
 ```js
 import { openJson } from 'reactive-json-file'
