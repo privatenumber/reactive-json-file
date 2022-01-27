@@ -102,7 +102,8 @@ test('only call once', async () => {
 		serialize,
 	});
 
-	for (let i = 0; i < 10_000; i += 1) {
+	// eslint-disable-next-line unicorn/numeric-separators-style
+	for (let i = 0; i < 10000; i += 1) {
 		object.name = `john doe ${i}`;
 		object.age = Math.random();
 	}
