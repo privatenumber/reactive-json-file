@@ -1,6 +1,6 @@
 import { Volume } from 'memfs';
 import yaml from 'js-yaml';
-import reactiveJsonFile from '../dist/reactive-json-file.js';
+import { openJson, closeJson } from '../src';
 
 const sleep = ms => new Promise((resolve) => {
 	setTimeout(resolve, ms);
@@ -20,7 +20,7 @@ beforeEach(() => {
 
 describe('write', () => {
 	test('basic use-case', async () => {
-		const object = reactiveJsonFile<{
+		const object = openJson<{
 			randomProp: string;
 		}>(filepath, { fs });
 
@@ -32,7 +32,7 @@ describe('write', () => {
 	});
 
 	test('default object', async () => {
-		const object = Object.assign(reactiveJsonFile(filepath, { fs }), {
+		const object = Object.assign(openJson(filepath, { fs }), {
 			name: 'default name',
 			age: 21,
 		});
@@ -49,7 +49,7 @@ describe('write', () => {
 	});
 
 	test('serialize/deserialize', async () => {
-		const object = reactiveJsonFile<{
+		const object = openJson<{
 			name: string;
 		}>(filepath, {
 			fs,
@@ -63,6 +63,20 @@ describe('write', () => {
 
 		expect(readFile(fs, filepath)).toBe(yaml.dump(object));
 	});
+
+	test('closeJson', async () => {
+		const object = openJson<{
+			randomProp: string;
+		}>(filepath, { fs });
+
+		closeJson(object);
+
+		object.randomProp = 'goodbye world';
+
+		await nextTick();
+
+		expect(() => readFile(fs, filepath)).toThrow('no such file');
+	});
 });
 
 describe('read', () => {
@@ -70,13 +84,26 @@ describe('read', () => {
 		fs.writeFileSync(filepath, JSON.stringify({
 			name: 'john doe',
 			gender: 'male',
+			deepProperty: {
+				deeperProperty: 1,
+			},
 		}));
 
-		const object = reactiveJsonFile(filepath, { fs });
+		const object = openJson<{
+			deepProperty: {
+				deeperProperty: number;
+			};
+		}>(filepath, { fs });
+
+		// Deep write
+		object.deepProperty.deeperProperty = 2;
 
 		expect(object).toMatchObject({
 			name: 'john doe',
 			gender: 'male',
+			deepProperty: {
+				deeperProperty: 2,
+			},
 		});
 	});
 
@@ -86,7 +113,7 @@ describe('read', () => {
 			gender: 'male',
 		}));
 
-		const object = reactiveJsonFile(filepath, {
+		const object = openJson(filepath, {
 			fs,
 			serialize: string => yaml.dump(string),
 			deserialize: object_ => yaml.load(object_),
@@ -101,7 +128,7 @@ describe('read', () => {
 
 test('only call once', async () => {
 	const serialize = jest.fn(JSON.stringify);
-	const object = reactiveJsonFile<{
+	const object = openJson<{
 		name: string;
 		age: number;
 	}>(filepath, {
@@ -109,22 +136,28 @@ test('only call once', async () => {
 		serialize,
 	});
 
-	// eslint-disable-next-line unicorn/numeric-separators-style
-	for (let i = 0; i < 10000; i += 1) {
+	for (let i = 0; i < 1000; i += 1) {
 		object.name = `john doe ${i}`;
 		object.age = Math.random();
+		object[i] = true;
 	}
 
 	await nextTick();
 
-	expect(serialize).toHaveBeenCalledTimes(1);
+	// First call is for serialization to track properties
+	expect(serialize).toHaveBeenCalledTimes(2);
 });
 
 test('throttle', async () => {
+	const object = {
+		deepProperty: {
+			deeperProperty: 1,
+		},
+	} as const;
+	fs.writeFileSync(filepath, JSON.stringify(object));
+
 	const serialize = jest.fn(JSON.stringify);
-	const object = reactiveJsonFile<{
-		random: number;
-	}>(filepath, {
+	const object = openJson<typeof object>(filepath, {
 		fs,
 		serialize,
 		throttle: 1000,
@@ -135,14 +168,16 @@ test('throttle', async () => {
 			return;
 		}
 
-		object.random = Math.random();
+		const random = Math.random();
+		object.deepProperty[random] = Math.random();
 		await sleep(100);
 		i -= 1;
-		return change(i);
+		return await change(i);
 	}
 
 	await change(5);
 	await sleep(500);
 
 	expect(serialize).toHaveBeenCalledTimes(2);
+	expect(readFile(fs, filepath)).toBe(JSON.stringify(object));
 });

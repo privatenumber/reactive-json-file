@@ -5,10 +5,10 @@ Sync JSON mutations to disk using reactive magic!
 Great for removing "save concerns" after updating a JSON object on disk.
 
 ```js
-import reactiveJsonFile from 'reactive-json-file'
+import { openJson } from 'reactive-json-file'
 
 // Open a JSON file
-const object = reactiveJsonFile('./data.json')
+const object = openJson('./data.json')
 
 // No need to save changes to disk, just update the object
 object.name = 'John Doe'
@@ -39,4 +39,4 @@ npm i reactive-json-file
 ## 🙋‍♀️ FAQ
 
 ### How does it work?
-Arbitrary new changes are detected by using Vue 3's reactive API, which uses [Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) behind the scenes.
+Arbitrary new changes are detected by using ES6 [Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) behind the scenes.
