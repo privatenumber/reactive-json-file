@@ -34,7 +34,7 @@ Open a file (eg. JSON file) and return the object
 
     const object = openYaml('./file.yaml', {
         serialize: string => yaml.dump(string),
-        deserialize: object_ => yaml.load(object_)
+        deserialize: object => yaml.load(object)
     })
 
     object.message = 'YAML!'
