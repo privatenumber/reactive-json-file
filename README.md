@@ -1,6 +1,8 @@
 # reactive-json-file <a href="https://npm.im/reactive-json-file"><img src="https://badgen.net/npm/v/reactive-json-file"></a>
 
-Transparently sync JavaScript object mutations to JSON file. Great for removing "save concerns" after updating a JSON object on disk.
+Sync JavaScript object mutations to JSON file using reactive magic!
+
+Great for removing "save concerns" after updating a JSON object on disk.
 
 ```js
 import reactiveJsonFile from 'reactive-json-file'
@@ -8,7 +10,7 @@ import reactiveJsonFile from 'reactive-json-file'
 // Open a JSON file
 const object = reactiveJsonFile('./data.json')
 
-// Mutating the object automatically saves to file!
+// No need to save changes to disk, just update the object
 object.name = 'John Doe'
 ```
 
