@@ -149,15 +149,15 @@ test('only call once', async () => {
 });
 
 test('throttle', async () => {
-	const object = {
+	const data = {
 		deepProperty: {
 			deeperProperty: 1,
 		},
 	} as const;
-	fs.writeFileSync(filepath, JSON.stringify(object));
+	fs.writeFileSync(filepath, JSON.stringify(data));
 
 	const serialize = jest.fn(JSON.stringify);
-	const object = openJson<typeof object>(filepath, {
+	const object = openJson<typeof data>(filepath, {
 		fs,
 		serialize,
 		throttle: 1000,
