@@ -1,43 +1,52 @@
 {
-  "name": "reactive-json-file",
-  "version": "0.0.0-semantic-release",
-  "description": "Reactively save objects to file",
-  "keywords": [
-    "reactive",
-    "vue",
-    "json",
-    "save",
-    "file"
-  ],
-  "repository": "privatenumber/reactive-json-file",
-  "author": "Hiroki Osame <hiroki.osame@gmail.com>",
-  "license": "MIT",
-  "files": [
-    "lib"
-  ],
-  "main": "lib/reactive-json-file.js",
-  "scripts": {
-    "test": "jest",
-    "lint": "xo"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.js": "xo"
-  },
-  "dependencies": {
-    "lodash.throttle": "^4.1.1",
-    "vue": "^3.0.0-rc.9"
-  },
-  "devDependencies": {
-    "husky": "^4.2.5",
-    "jest": "^26.4.2",
-    "js-yaml": "^3.14.0",
-    "lint-staged": "^10.2.13",
-    "memfs": "^3.2.0",
-    "xo": "^0.33.0"
-  }
+	"name": "reactive-json-file",
+	"version": "0.0.0-semantic-release",
+	"description": "Reactively sync JSON mutations to disk",
+	"keywords": [
+		"reactive",
+		"vue",
+		"json",
+		"save",
+		"file"
+	],
+	"license": "MIT",
+	"repository": "privatenumber/reactive-json-file",
+	"author": "Hiroki Osame <hiroki.osame@gmail.com>",
+	"files": [
+		"dist"
+	],
+	"main": "dist/reactive-json-file.js",
+	"scripts": {
+		"build": "tsc",
+		"test": "jest",
+		"lint": "eslint ."
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		"*.{js,ts}": "eslint"
+	},
+	"dependencies": {
+		"lodash.throttle": "^4.1.1",
+		"vue": "^3.2.29"
+	},
+	"devDependencies": {
+		"@pvtnbr/eslint-config": "^0.13.0",
+		"@types/jest": "^27.4.0",
+		"@types/lodash.throttle": "^4.1.6",
+		"es-jest": "^1.5.0",
+		"eslint": "^8.7.0",
+		"husky": "^4.2.5",
+		"jest": "^26.4.2",
+		"js-yaml": "^3.14.0",
+		"lint-staged": "^10.2.13",
+		"memfs": "^3.2.0",
+		"typescript": "^4.5.5"
+	},
+	"eslintConfig": {
+		"extends": "@pvtnbr"
+	}
 }

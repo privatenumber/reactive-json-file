@@ -1,23 +1,23 @@
-# reactive-json-file <a href="https://npm.im/reactive-json-file"><img src="https://badgen.net/npm/v/reactive-json-file"></a> <a href="https://npm.im/reactive-json-file"><img src="https://badgen.net/npm/dm/reactive-json-file"></a> <a href="https://packagephobia.now.sh/result?p=reactive-json-file"><img src="https://packagephobia.now.sh/badge?p=reactive-json-file"></a> <a href="https://bundlephobia.com/result?p=reactive-json-file"><img src="https://badgen.net/bundlephobia/minzip/reactive-json-file"></a>
+# reactive-json-file <a href="https://npm.im/reactive-json-file"><img src="https://badgen.net/npm/v/reactive-json-file"></a>
 
-Save your JS objects to a JSON file as you mutate them
+Sync JSON mutations to disk using reactive magic!
+
+Great for removing "save concerns" after updating a JSON object on disk.
 
 ```js
 import reactiveJsonFile from 'reactive-json-file'
 
-// Create a new JSON
+// Open a JSON file
 const object = reactiveJsonFile('./data.json')
 
-// Mutating the object automatically saves to file
+// No need to save changes to disk, just update the object
 object.name = 'John Doe'
-
 ```
 
 ## :rocket: Install
 ```sh
 npm i reactive-json-file
 ```
-
 
 ## ⚙️ Options
 - `throttle` `<Number>` - Milliseconds to throttle saves by. Saves are already batched at the end of every event-loop, but this adds time-based throttling.
@@ -29,8 +29,8 @@ npm i reactive-json-file
     import yaml from 'js-yaml'
 
     const object = reactiveJsonFile('./file.yaml', {
-    	serialize: string => yaml.dump(string),
-    	deserialize: object_ => yaml.load(object_)
+        serialize: string => yaml.dump(string),
+        deserialize: object_ => yaml.load(object_)
     })
 
     object.message = 'YAML!'

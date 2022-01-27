@@ -1,12 +1,12 @@
-const reactiveJsonFile = require('..');
-const {Volume} = require('memfs');
-const yaml = require('js-yaml');
+import { Volume } from 'memfs';
+import yaml from 'js-yaml';
+import reactiveJsonFile from '../dist/reactive-json-file.js';
 
-const sleep = ms => new Promise(resolve => {
+const sleep = ms => new Promise((resolve) => {
 	setTimeout(resolve, ms);
 });
 
-const nextTick = () => new Promise(resolve => {
+const nextTick = () => new Promise((resolve) => {
 	process.nextTick(resolve);
 });
 const readFile = (fs, filepath) => fs.readFileSync(filepath).toString();
@@ -20,7 +20,9 @@ beforeEach(() => {
 
 describe('write', () => {
 	test('basic use-case', async () => {
-		const object = reactiveJsonFile(filepath, {fs});
+		const object = reactiveJsonFile<{
+			randomProp: string;
+		}>(filepath, { fs });
 
 		object.randomProp = 'hello world';
 
@@ -30,7 +32,7 @@ describe('write', () => {
 	});
 
 	test('default object', async () => {
-		const object = Object.assign(reactiveJsonFile(filepath, {fs}), {
+		const object = Object.assign(reactiveJsonFile(filepath, { fs }), {
 			name: 'default name',
 			age: 21,
 		});
@@ -47,7 +49,9 @@ describe('write', () => {
 	});
 
 	test('serialize/deserialize', async () => {
-		const object = reactiveJsonFile(filepath, {
+		const object = reactiveJsonFile<{
+			name: string;
+		}>(filepath, {
 			fs,
 			serialize: string => yaml.dump(string),
 			deserialize: object_ => yaml.load(object_),
@@ -68,7 +72,7 @@ describe('read', () => {
 			gender: 'male',
 		}));
 
-		const object = reactiveJsonFile(filepath, {fs});
+		const object = reactiveJsonFile(filepath, { fs });
 
 		expect(object).toMatchObject({
 			name: 'john doe',
@@ -97,12 +101,16 @@ describe('read', () => {
 
 test('only call once', async () => {
 	const serialize = jest.fn(JSON.stringify);
-	const object = reactiveJsonFile(filepath, {
+	const object = reactiveJsonFile<{
+		name: string;
+		age: number;
+	}>(filepath, {
 		fs,
 		serialize,
 	});
 
-	for (let i = 0; i < 10000; i++) {
+	// eslint-disable-next-line unicorn/numeric-separators-style
+	for (let i = 0; i < 10000; i += 1) {
 		object.name = `john doe ${i}`;
 		object.age = Math.random();
 	}
@@ -114,7 +122,9 @@ test('only call once', async () => {
 
 test('throttle', async () => {
 	const serialize = jest.fn(JSON.stringify);
-	const object = reactiveJsonFile(filepath, {
+	const object = reactiveJsonFile<{
+		random: number;
+	}>(filepath, {
 		fs,
 		serialize,
 		throttle: 1000,
@@ -125,9 +135,10 @@ test('throttle', async () => {
 			return;
 		}
 
-		object.a = Math.random();
+		object.random = Math.random();
 		await sleep(100);
-		return change(--i);
+		i -= 1;
+		return change(i);
 	}
 
 	await change(5);
