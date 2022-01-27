@@ -2,24 +2,34 @@ import nativeFs from 'fs';
 import lodashThrottle from 'lodash.throttle';
 import { observable, observe, unobserve } from '@nx-js/observer-util';
 
-type Fs = typeof nativeFs;
+type FsLike = {
+	readFileSync: (
+		path: string,
+		options?: 'utf-8',
+	) => string | Buffer;
 
-const readFile = (
-	fs: Fs,
-	filepath: string,
-) => {
-	try {
-		return fs.readFileSync(filepath, 'utf-8');
-	} catch {}
-
-	return '{}';
+	writeFileSync: (
+		path: string,
+		data: string,
+	) => void;
 };
 
 const jsonSerialize = (object: any) => JSON.stringify(object);
 const jsonDeserialize = (string: string) => JSON.parse(string);
 
+const safeReadFile = (
+	fs: FsLike,
+	filepath: string,
+) => {
+	try {
+		return fs.readFileSync(filepath, 'utf-8').toString();
+	} catch {}
+
+	return null;
+};
+
 type Options = {
-	fs?: Fs;
+	fs?: FsLike;
 	serialize?: typeof jsonSerialize;
 	deserialize?: typeof jsonDeserialize;
 	throttle?: number;
@@ -29,8 +39,29 @@ type Reaction = () => void;
 
 const watches = new WeakMap<object, Reaction>();
 
-export function openJson<T extends object>(
+function openJson<T extends object>(
 	filepath: string,
+): T;
+
+function openJson<T extends object>(
+	filepath: string,
+	options: Options,
+): T;
+
+function openJson<T extends object>(
+	filepath: string,
+	defaultObject: T,
+): T;
+
+function openJson<T extends object>(
+	filepath: string,
+	defaultObject: T,
+	options: Options,
+): T;
+
+function openJson<T extends object>(
+	filepath: string,
+	defaultObject?: T,
 	{
 		fs = nativeFs,
 		serialize = jsonSerialize,
@@ -53,7 +84,12 @@ export function openJson<T extends object>(
 		writeFunction = lodashThrottle(writeFunction, throttle);
 	}
 
-	const object = observable<T>(deserialize(readFile(fs, filepath)));
+	const fileContent = safeReadFile(fs, filepath);
+	const object = observable<T>(
+		fileContent !== null
+			? deserialize(fileContent)
+			: defaultObject,
+	);
 
 	let latestReaction: Reaction | undefined;
 	const observed = observe(writeFunction, {
@@ -73,6 +109,8 @@ export function openJson<T extends object>(
 
 	return object;
 }
+
+export { openJson };
 
 export function closeJson<T extends object>(
 	jsonObject: T,

@@ -2,17 +2,16 @@ import { Volume } from 'memfs';
 import yaml from 'js-yaml';
 import { openJson, closeJson } from '../src';
 
-const sleep = ms => new Promise((resolve) => {
+const sleep = (ms: number) => new Promise((resolve) => {
 	setTimeout(resolve, ms);
 });
 
 const nextTick = () => new Promise((resolve) => {
 	process.nextTick(resolve);
 });
-const readFile = (fs, filepath) => fs.readFileSync(filepath).toString();
 
 const filepath = '/obj.json';
-let fs;
+let fs = new Volume();
 
 beforeEach(() => {
 	fs = new Volume();
@@ -28,14 +27,14 @@ describe('write', () => {
 
 		await nextTick();
 
-		expect(readFile(fs, filepath)).toBe(JSON.stringify(object));
+		expect(fs.readFileSync(filepath, 'utf-8')).toBe(JSON.stringify(object));
 	});
 
 	test('default object', async () => {
-		const object = Object.assign(openJson(filepath, { fs }), {
+		const object = openJson(filepath, {
 			name: 'default name',
 			age: 21,
-		});
+		}, { fs });
 
 		expect(object.name).toBe('default name');
 		expect(object.age).toBe(21);
@@ -45,7 +44,7 @@ describe('write', () => {
 
 		await nextTick();
 
-		expect(readFile(fs, filepath)).toBe(JSON.stringify(object));
+		expect(fs.readFileSync(filepath, 'utf-8')).toBe(JSON.stringify(object));
 	});
 
 	test('serialize/deserialize', async () => {
@@ -61,7 +60,7 @@ describe('write', () => {
 
 		await nextTick();
 
-		expect(readFile(fs, filepath)).toBe(yaml.dump(object));
+		expect(fs.readFileSync(filepath, 'utf-8')).toBe(yaml.dump(object));
 	});
 
 	test('closeJson', async () => {
@@ -75,7 +74,7 @@ describe('write', () => {
 
 		await nextTick();
 
-		expect(() => readFile(fs, filepath)).toThrow('no such file');
+		expect(() => fs.readFileSync(filepath, 'utf-8')).toThrow('no such file');
 	});
 });
 
@@ -139,7 +138,6 @@ test('only call once', async () => {
 	for (let i = 0; i < 1000; i += 1) {
 		object.name = `john doe ${i}`;
 		object.age = Math.random();
-		object[i] = true;
 	}
 
 	await nextTick();
@@ -153,7 +151,7 @@ test('throttle', async () => {
 		deepProperty: {
 			deeperProperty: 1,
 		},
-	} as const;
+	};
 	fs.writeFileSync(filepath, JSON.stringify(data));
 
 	const serialize = jest.fn(JSON.stringify);
@@ -163,13 +161,12 @@ test('throttle', async () => {
 		throttle: 1000,
 	});
 
-	async function change(i) {
+	async function change(i: number): Promise<void> {
 		if (i === 0) {
 			return;
 		}
 
-		const random = Math.random();
-		object.deepProperty[random] = Math.random();
+		object.deepProperty.deeperProperty = Math.random();
 		await sleep(100);
 		i -= 1;
 		return await change(i);
@@ -179,5 +176,5 @@ test('throttle', async () => {
 	await sleep(500);
 
 	expect(serialize).toHaveBeenCalledTimes(2);
-	expect(readFile(fs, filepath)).toBe(JSON.stringify(object));
+	expect(fs.readFileSync(filepath, 'utf-8')).toBe(JSON.stringify(object));
 });
