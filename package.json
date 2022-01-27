@@ -13,10 +13,11 @@
 	"repository": "privatenumber/reactive-json-file",
 	"author": "Hiroki Osame <hiroki.osame@gmail.com>",
 	"files": [
-		"lib"
+		"dist"
 	],
-	"main": "lib/reactive-json-file.js",
+	"main": "dist/reactive-json-file.js",
 	"scripts": {
+		"build": "tsc",
 		"test": "jest",
 		"lint": "eslint ."
 	},
@@ -26,7 +27,7 @@
 		}
 	},
 	"lint-staged": {
-		"*.js": "eslint"
+		"*.{js,ts}": "eslint"
 	},
 	"dependencies": {
 		"lodash.throttle": "^4.1.1",
@@ -34,12 +35,14 @@
 	},
 	"devDependencies": {
 		"@pvtnbr/eslint-config": "^0.13.0",
+		"@types/lodash.throttle": "^4.1.6",
 		"eslint": "^8.7.0",
 		"husky": "^4.2.5",
 		"jest": "^26.4.2",
 		"js-yaml": "^3.14.0",
 		"lint-staged": "^10.2.13",
-		"memfs": "^3.2.0"
+		"memfs": "^3.2.0",
+		"typescript": "^4.5.5"
 	},
 	"eslintConfig": {
 		"extends": "@pvtnbr"
