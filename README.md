@@ -19,22 +19,29 @@ object.name = 'John Doe'
 npm i reactive-json-file
 ```
 
-## ⚙️ Options
+## ⚙️ API
+### openJson(filePath, options)
+Open a file (eg. JSON file) and return the object
+
+#### Options
 - `throttle` `<Number>` - Milliseconds to throttle saves by. Saves are already batched at the end of every event-loop, but this adds time-based throttling.
 - `fs` `<FileSystemInterface>` ([fs](https://nodejs.org/api/fs.html)) - Pass in a custom file-system. Defaults to native Node.js fs
 - `serialize`/`deserialize` `<Function>` - Functions to serialize/deserialize the object with. eg. to save output to YAML
 
     ```js
-    import reactiveJsonFile from 'reactive-json-file'
+    import { openJson as openYaml } from 'reactive-json-file'
     import yaml from 'js-yaml'
 
-    const object = reactiveJsonFile('./file.yaml', {
+    const object = openYaml('./file.yaml', {
         serialize: string => yaml.dump(string),
         deserialize: object_ => yaml.load(object_)
     })
 
     object.message = 'YAML!'
     ```
+
+### closeJson(object)
+Close a file to disable syncing
 
 ## 🙋‍♀️ FAQ
 
