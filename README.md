@@ -10,7 +10,6 @@ const object = reactiveJsonFile('./data.json')
 
 // Mutating the object automatically saves to file
 object.name = 'John Doe'
-
 ```
 
 ## :rocket: Install
@@ -29,8 +28,8 @@ npm i reactive-json-file
     import yaml from 'js-yaml'
 
     const object = reactiveJsonFile('./file.yaml', {
-    	serialize: string => yaml.dump(string),
-    	deserialize: object_ => yaml.load(object_)
+        serialize: string => yaml.dump(string),
+        deserialize: object_ => yaml.load(object_)
     })
 
     object.message = 'YAML!'

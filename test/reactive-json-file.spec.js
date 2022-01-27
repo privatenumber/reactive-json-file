@@ -1,12 +1,12 @@
-const reactiveJsonFile = require('..');
-const {Volume} = require('memfs');
+const { Volume } = require('memfs');
 const yaml = require('js-yaml');
+const reactiveJsonFile = require('..');
 
-const sleep = ms => new Promise(resolve => {
+const sleep = ms => new Promise((resolve) => {
 	setTimeout(resolve, ms);
 });
 
-const nextTick = () => new Promise(resolve => {
+const nextTick = () => new Promise((resolve) => {
 	process.nextTick(resolve);
 });
 const readFile = (fs, filepath) => fs.readFileSync(filepath).toString();
@@ -20,7 +20,7 @@ beforeEach(() => {
 
 describe('write', () => {
 	test('basic use-case', async () => {
-		const object = reactiveJsonFile(filepath, {fs});
+		const object = reactiveJsonFile(filepath, { fs });
 
 		object.randomProp = 'hello world';
 
@@ -30,7 +30,7 @@ describe('write', () => {
 	});
 
 	test('default object', async () => {
-		const object = Object.assign(reactiveJsonFile(filepath, {fs}), {
+		const object = Object.assign(reactiveJsonFile(filepath, { fs }), {
 			name: 'default name',
 			age: 21,
 		});
@@ -68,7 +68,7 @@ describe('read', () => {
 			gender: 'male',
 		}));
 
-		const object = reactiveJsonFile(filepath, {fs});
+		const object = reactiveJsonFile(filepath, { fs });
 
 		expect(object).toMatchObject({
 			name: 'john doe',
@@ -102,7 +102,7 @@ test('only call once', async () => {
 		serialize,
 	});
 
-	for (let i = 0; i < 10000; i++) {
+	for (let i = 0; i < 10_000; i += 1) {
 		object.name = `john doe ${i}`;
 		object.age = Math.random();
 	}
@@ -127,7 +127,8 @@ test('throttle', async () => {
 
 		object.a = Math.random();
 		await sleep(100);
-		return change(--i);
+		i -= 1;
+		return change(i);
 	}
 
 	await change(5);
