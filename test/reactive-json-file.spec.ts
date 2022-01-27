@@ -1,6 +1,6 @@
-const { Volume } = require('memfs');
-const yaml = require('js-yaml');
-const reactiveJsonFile = require('../dist/reactive-json-file.js');
+import { Volume } from 'memfs';
+import yaml from 'js-yaml';
+import reactiveJsonFile from '../dist/reactive-json-file.js';
 
 const sleep = ms => new Promise((resolve) => {
 	setTimeout(resolve, ms);
@@ -20,7 +20,9 @@ beforeEach(() => {
 
 describe('write', () => {
 	test('basic use-case', async () => {
-		const object = reactiveJsonFile(filepath, { fs });
+		const object = reactiveJsonFile<{
+			randomProp: string;
+		}>(filepath, { fs });
 
 		object.randomProp = 'hello world';
 
@@ -47,7 +49,9 @@ describe('write', () => {
 	});
 
 	test('serialize/deserialize', async () => {
-		const object = reactiveJsonFile(filepath, {
+		const object = reactiveJsonFile<{
+			name: string;
+		}>(filepath, {
 			fs,
 			serialize: string => yaml.dump(string),
 			deserialize: object_ => yaml.load(object_),
@@ -97,7 +101,10 @@ describe('read', () => {
 
 test('only call once', async () => {
 	const serialize = jest.fn(JSON.stringify);
-	const object = reactiveJsonFile(filepath, {
+	const object = reactiveJsonFile<{
+		name: string;
+		age: number;
+	}>(filepath, {
 		fs,
 		serialize,
 	});
@@ -115,7 +122,9 @@ test('only call once', async () => {
 
 test('throttle', async () => {
 	const serialize = jest.fn(JSON.stringify);
-	const object = reactiveJsonFile(filepath, {
+	const object = reactiveJsonFile<{
+		random: number;
+	}>(filepath, {
 		fs,
 		serialize,
 		throttle: 1000,
@@ -126,7 +135,7 @@ test('throttle', async () => {
 			return;
 		}
 
-		object.a = Math.random();
+		object.random = Math.random();
 		await sleep(100);
 		i -= 1;
 		return change(i);

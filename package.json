@@ -35,7 +35,9 @@
 	},
 	"devDependencies": {
 		"@pvtnbr/eslint-config": "^0.13.0",
+		"@types/jest": "^27.4.0",
 		"@types/lodash.throttle": "^4.1.6",
+		"es-jest": "^1.5.0",
 		"eslint": "^8.7.0",
 		"husky": "^4.2.5",
 		"jest": "^26.4.2",
