@@ -30,20 +30,30 @@ describe('write', () => {
 		expect(fs.readFileSync(filepath, 'utf-8')).toBe(JSON.stringify(object));
 	});
 
-	test('default object', async () => {
-		const object = openJson(filepath, {
+	test('using default', async () => {
+		const defaultObject = {
 			name: 'default name',
 			age: 21,
-		}, { fs });
+		};
+		const object = openJson(filepath, {
+			default: defaultObject,
+			fs,
+		});
 
-		expect(object.name).toBe('default name');
-		expect(object.age).toBe(21);
+		expect<typeof defaultObject>(object).toStrictEqual({
+			name: 'default name',
+			age: 21,
+		});
+
+		// Using default should write to disk
+		expect(fs.readFileSync(filepath, 'utf-8')).toBe(JSON.stringify(object));
 
 		object.name = 'john doe';
 		object.age = 99;
 
 		await nextTick();
 
+		// Using default should be reactive
 		expect(fs.readFileSync(filepath, 'utf-8')).toBe(JSON.stringify(object));
 	});
 

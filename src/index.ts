@@ -1,18 +1,7 @@
 import nativeFs from 'fs';
 import lodashThrottle from 'lodash.throttle';
 import { observable, observe, unobserve } from '@nx-js/observer-util';
-
-type FsLike = {
-	readFileSync: (
-		path: string,
-		options?: 'utf-8',
-	) => string | Buffer;
-
-	writeFileSync: (
-		path: string,
-		data: string,
-	) => void;
-};
+import type { FsLike, Reaction, Options } from './types';
 
 const jsonSerialize = (object: any) => JSON.stringify(object);
 const jsonDeserialize = (string: string) => JSON.parse(string);
@@ -28,52 +17,27 @@ const safeReadFile = (
 	return null;
 };
 
-type Options = {
-	fs?: FsLike;
-	serialize?: typeof jsonSerialize;
-	deserialize?: typeof jsonDeserialize;
-	throttle?: number;
-};
-
-type Reaction = () => void;
-
 const watches = new WeakMap<object, Reaction>();
 
 function openJson<T extends object>(
 	filepath: string,
-): T;
-
-function openJson<T extends object>(
-	filepath: string,
-	options: Options,
-): T;
-
-function openJson<T extends object>(
-	filepath: string,
-	defaultObject: T,
-): T;
-
-function openJson<T extends object>(
-	filepath: string,
-	defaultObject: T,
-	options: Options,
-): T;
-
-function openJson<T extends object>(
-	filepath: string,
-	defaultObject?: T,
-	{
+	options: Options<T> = {},
+): T {
+	const {
 		fs = nativeFs,
 		serialize = jsonSerialize,
 		deserialize = jsonDeserialize,
 		throttle,
-	}: Options = {},
-): T {
-	let initialized = false;
+		default: defaultObject,
+	} = options;
+
+	let shouldWrite = false;
 	let writeFunction = () => {
-		const data = serialize(object);
-		if (!initialized) {
-			initialized = true;
+		const data = serialize(object!);
+
+		// Skip writing first call for observer to detect properties
+		if (!shouldWrite) {
+			shouldWrite = true;
 			return;
 		}
 
@@ -85,11 +49,19 @@ function openJson<T extends object>(
 	}
 
 	const fileContent = safeReadFile(fs, filepath);
-	const object = observable<T>(
-		fileContent !== null
-			? deserialize(fileContent)
-			: defaultObject,
-	);
+	let object: T | undefined;
+	if (fileContent === null) {
+		if (defaultObject) {
+			object = defaultObject;
+			shouldWrite = true;
+		} else {
+			object = {} as T;
+		}
+	} else {
+		object = deserialize(fileContent);
+	}
+
+	object = observable(object);
 
 	let latestReaction: Reaction | undefined;
 	const observed = observe(writeFunction, {

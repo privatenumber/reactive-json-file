@@ -28,7 +28,6 @@
 	"scripts": {
 		"build": "rollup -c",
 		"test": "jest",
-		"test:dts": "tsd",
 		"lint": "eslint ."
 	},
 	"husky": {
@@ -58,13 +57,9 @@
 		"rollup": "^2.66.1",
 		"rollup-plugin-dts": "^4.1.0",
 		"rollup-plugin-esbuild": "^4.8.2",
-		"tsd": "^0.19.1",
 		"typescript": "^4.5.5"
 	},
 	"eslintConfig": {
 		"extends": "@pvtnbr"
-	},
-	"tsd": {
-		"directory": "tests"
 	}
 }
