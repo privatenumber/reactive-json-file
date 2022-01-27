@@ -1,6 +1,6 @@
 const { Volume } = require('memfs');
 const yaml = require('js-yaml');
-const reactiveJsonFile = require('../dist/reactive-json-file');
+const reactiveJsonFile = require('../dist/reactive-json-file.js');
 
 const sleep = ms => new Promise((resolve) => {
 	setTimeout(resolve, ms);
