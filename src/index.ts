@@ -1,8 +1,10 @@
 import nativeFs from 'fs';
+import crypto from 'crypto';
 import lodashThrottle from 'lodash.throttle';
 import { observable, observe, unobserve } from '@nx-js/observer-util';
 import type { FsLike, Reaction, Options } from './types';
 
+const hash = (data: string) => crypto.createHash('sha1').update(data).digest('base64');
 const jsonSerialize = (object: any) => JSON.stringify(object);
 const jsonDeserialize = (string: string) => JSON.parse(string);
 
@@ -31,17 +33,17 @@ function openJson<T extends object>(
 		default: defaultObject,
 	} = options;
 
-	let shouldWrite = false;
+	let fileHash: string | undefined;
 	let writeFunction = () => {
 		const data = serialize(object!);
+		const hashed = hash(data);
 
-		// Skip writing first call for observer to detect properties
-		if (!shouldWrite) {
-			shouldWrite = true;
+		if (fileHash === hashed) {
 			return;
 		}
 
 		fs.writeFileSync(filepath, data);
+		fileHash = hashed;
 	};
 
 	if (typeof throttle === 'number') {
@@ -53,9 +55,9 @@ function openJson<T extends object>(
 	if (fileContent === null) {
 		if (defaultObject) {
 			object = defaultObject;
-			shouldWrite = true;
 		} else {
 			object = {} as T;
+			fileHash = hash(serialize(object));
 		}
 	} else {
 		object = deserialize(fileContent);

@@ -86,6 +86,27 @@ describe('write', () => {
 
 		expect(() => fs.readFileSync(filepath, 'utf-8')).toThrow('no such file');
 	});
+
+	test('should not re-write same changes', async () => {
+		const data = JSON.stringify({
+			a: 1,
+			b: {
+				c: 2,
+			},
+		});
+
+		fs.writeFileSync(filepath, data);
+
+		const object = openJson(filepath, { fs });
+
+		fs.unlinkSync(filepath);
+
+		Object.assign(object, JSON.parse(data));
+
+		await nextTick();
+
+		expect(fs.existsSync(filepath)).toBe(false);
+	});
 });
 
 describe('read', () => {
@@ -153,7 +174,8 @@ test('only call once', async () => {
 	await nextTick();
 
 	// First call is for serialization to track properties
-	expect(serialize).toHaveBeenCalledTimes(2);
+	// Second call is hashing an empty default object
+	expect(serialize).toHaveBeenCalledTimes(3);
 });
 
 test('throttle', async () => {
