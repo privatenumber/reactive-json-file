@@ -15,7 +15,16 @@
 	"files": [
 		"dist"
 	],
-	"main": "dist/reactive-json-file.js",
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"require": "./dist/index.js",
+			"import": "./dist/index.mjs"
+		}
+	},
 	"scripts": {
 		"build": "rollup -c",
 		"test": "jest",
@@ -45,6 +54,7 @@
 		"lodash.throttle": "^4.1.1",
 		"memfs": "^3.2.0",
 		"rollup": "^2.66.1",
+		"rollup-plugin-dts": "^4.1.0",
 		"rollup-plugin-esbuild": "^4.8.2",
 		"typescript": "^4.5.5"
 	},
