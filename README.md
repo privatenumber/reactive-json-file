@@ -33,8 +33,8 @@ Open a file (eg. JSON file) and return the object
     import yaml from 'js-yaml'
 
     const object = openYaml('./file.yaml', {
-        serialize: string => yaml.dump(string),
-        deserialize: object => yaml.load(object)
+        serialize: data => yaml.dump(data),
+        deserialize: string => yaml.load(string)
     })
 
     object.message = 'YAML!'

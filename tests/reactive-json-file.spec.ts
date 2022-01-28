@@ -62,8 +62,8 @@ describe('write', () => {
 			name: string;
 		}>(filepath, {
 			fs,
-			serialize: string => yaml.dump(string),
-			deserialize: object_ => yaml.load(object_),
+			serialize: data => yaml.dump(data),
+			deserialize: string => yaml.load(string),
 		});
 
 		object.name = 'john doe';
