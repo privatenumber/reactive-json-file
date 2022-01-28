@@ -30,8 +30,8 @@ export default [
 	defineConfig({
 		input: 'src/index.ts',
 		output: {
-			file: 'dist/index.d.ts',
 			format: 'esm',
+			file: 'dist/index.d.ts',
 		},
 		plugins: [dts()],
 	}),
