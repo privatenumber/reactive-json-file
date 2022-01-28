@@ -7,7 +7,7 @@ import dts from 'rollup-plugin-dts';
 
 export default [
 	defineConfig({
-		input: 'src/index.ts',
+		input: './src/index.ts',
 		plugins: [
 			nodeResolve(),
 			commonjs(),
@@ -19,20 +19,20 @@ export default [
 		output: [
 			{
 				format: 'esm',
-				file: 'dist/index.mjs',
+				file: './dist/index.mjs',
 			},
 			{
 				format: 'cjs',
-				file: 'dist/index.js',
+				file: './dist/index.js',
 			},
 		],
 	}),
 	defineConfig({
-		input: 'src/index.ts',
+		input: './src/index.ts',
+		plugins: [dts()],
 		output: {
 			format: 'esm',
-			file: 'dist/index.d.ts',
+			file: './dist/index.d.ts',
 		},
-		plugins: [dts()],
 	}),
 ];
